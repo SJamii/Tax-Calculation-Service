@@ -17,7 +17,7 @@ func Init(url string) {
 		log.Fatalln(err)
 	}
 
-	db.AutoMigrate(&models.TaxAssesment{})
+	db.AutoMigrate(&models.TaxAssesment{}, &models.TaxAssesmentLineItem{})
 
 	DB = db
 }

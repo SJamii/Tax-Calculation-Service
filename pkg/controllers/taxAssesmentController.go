@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -37,24 +38,29 @@ func TaxAssesmentSave(ctx *gin.Context) {
 
 	body := models.TaxAssesment{}
 
-	if err := ctx.ShouldBindJSON(&body); err != nil {
+	fmt.Println(body)
 
-		ctx.AbortWithError(http.StatusBadRequest, err)
+	if err := ctx.BindJSON(&body); err != nil {
+		responseData := response.Response{
+			Status:  http.StatusBadRequest,
+			Data:    err,
+			Message: "Invaild",
+		}
+
+		// ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusOK, responseData)
+		// ctx.String(http.StatusBadRequest, "get form err: %s", err.Error())
 		return
 	}
 
-	repository.TaxAssesmentSaveRepo(ctx, body)
+	responseData := repository.TaxAssesmentSaveRepo(ctx, body)
 
-	// if result := config.DB.Create(&body); result.Error != nil {
-	// 	ctx.AbortWithError(http.StatusNotFound, result.Error)
-	// 	return
+	// responseData := response.Response{
+	// 	Status:  http.StatusOK,
+	// 	Data:    body,
+	// 	Message: "Data Saved successfully",
 	// }
-
-	responseData := response.Response{
-		Status:  http.StatusOK,
-		Data:    body,
-		Message: "Data Saved successfully",
-	}
+	// return responseData
 
 	ctx.JSON(http.StatusOK, responseData)
 }
